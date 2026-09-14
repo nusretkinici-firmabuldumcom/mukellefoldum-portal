@@ -1,7 +1,0 @@
-const normalize=s=>s.toLocaleUpperCase('tr').replace(/[İIı]/g,'I').replace(/Ş/g,'S').replace(/Ğ/g,'G').replace(/Ü/g,'U').replace(/Ö/g,'O').replace(/Ç/g,'C').replace(/\s+/g,' ').trim();
-const labels={name:['TICARET UNVANI','UNVANI','ADI SOYADI','ADI VE SOYADI'],taxId:['VERGI KIMLIK NUMARASI','VERGI KIMLIK NO','VERGI NUMARASI','T.C. KIMLIK NUMARASI','TC KIMLIK NO','VKN'],taxOffice:['VERGI DAIRESI'],address:['IS YERI ADRESI','ISYERI ADRESI','ADRESI'],activity:['ANA FAALIYET KODU VE ADI','FAALIYET KODU VE ADI'],startDate:['ISE BASLAMA TARIHI']};
-const stops=['VERGI TÜRÜ','VERGI TURU','TAKVIM YILI','BEYAN OLUNAN','TAHAKKUK EDEN','ONAY KODU','VERGI LEVHASI',...Object.values(labels).flat()];
-export function extractTaxFields(text){const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);const fields={name:'',taxId:'',taxOffice:'',address:'',activity:'',startDate:''};
-  for(const [field,aliases] of Object.entries(labels)){for(let i=0;i<lines.length;i++){const n=normalize(lines[i]);const alias=aliases.find(a=>n.startsWith(a));if(!alias)continue;let value=lines[i].slice(alias.length).replace(/^[\s:;.-]+/,'').trim();if(!value){const next=[];for(let j=i+1;j<Math.min(lines.length,i+(field==='address'?5:3));j++){if(stops.some(s=>normalize(lines[j]).startsWith(s)))break;next.push(lines[j]);if(field!=='address')break;}value=next.join(' ');}if(field==='taxId'){const digits=value.replace(/\s/g,'').match(/(?<!\d)\d{10,11}(?!\d)/);value=digits?.[0]||'';}if(value){fields[field]=value;break;}}}
-  return fields;
-}
