@@ -47,7 +47,22 @@ export function portalHttp({startup,portal,archive,firms,json,body,cloud,admin})
     if(path==='/api/advisor/users'&&req.method==='GET')json(res,200,{users:await portal.users(q.get('firmId'))});
     else if(path==='/api/advisor/users'&&req.method==='POST')json(res,201,{user:await portal.createUser(JSON.parse((await body(req,4096)).toString()))});
     else if(path==='/api/advisor/user'&&req.method==='POST')json(res,200,{user:await portal.changeUser(JSON.parse((await body(req,4096)).toString()))});
-    else if(path==='/api/advisor/declarations'&&req.method==='GET')json(res,200,{declarations:await portal.publications(q.get('firmId'))});
+    if(path==='/api/advisor/invoices'&&req.method==='GET'){
+     const firmId=q.get('firmId'),period=q.get('period');
+     const firm=(await firms()).find(f=>f.id===firmId);if(!firm)throw Error('Firma bulunamadı.');
+     const workspace=await archive.read(firmId,period);
+     json(res,200,{firm:{id:firm.id,name:firm.name},period,revision:workspace.revision,documents:workspace.docs.map(d=>({id:d.id,name:d.name,uploadedAt:d.uploadedAt,type:d.type,category:d.uploadCategory,status:d.status,amount:d.amount,documentDate:d.documentDate,documentNumber:d.documentNumber}))});
+    }
+    else if(path==='/api/advisor/invoices/upload'&&req.method==='POST'){
+     const firmId=q.get('firmId'),period=q.get('period'),name=q.get('name'),category=q.get('category');
+     if(!(await firms()).some(f=>f.id===firmId))throw Error('Firma bulunamadı.');
+     const result=await archive.upload(firmId,period,name,await body(req,20*1024*1024),category);
+     json(res,201,{duplicate:result.result.duplicate,document:{id:result.result.document.id,name:result.result.document.name,type:result.result.document.type,category:result.result.document.uploadCategory,uploadedAt:result.result.document.uploadedAt}});
+    }
+    else if(path==='/api/advisor/invoices/file'&&req.method==='GET'){
+     const {doc,bytes}=await archive.file(q.get('firmId'),q.get('period'),q.get('id'));attachment(res,bytes,doc.name);
+    }
+    else else if(path==='/api/advisor/declarations'&&req.method==='GET')json(res,200,{declarations:await portal.publications(q.get('firmId'))});
     else if(path==='/api/advisor/publish'&&req.method==='POST')json(res,201,{declaration:await portal.publish(q.get('firmId'),q.get('period'),q.get('title'),await body(req,20*1024*1024))});
     else if(path==='/api/advisor/unpublish'&&req.method==='POST'){const input=JSON.parse((await body(req,4096)).toString());await portal.unpublish(input.firmId,input.id);json(res,200,{ok:true});}
     else json(res,404,{error:'İşlem bulunamadı.'});
