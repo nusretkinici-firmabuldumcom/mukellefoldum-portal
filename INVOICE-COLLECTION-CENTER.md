@@ -5,6 +5,7 @@ Bu dal, eski MükellefOldum kaynak kodunun kurtarılabilen sunucu tarafı sürü
 ## İlk aşama: SMMM ekranı ve belge kabul API'si
 
 - Danışman oturumu ile açılan `/fatura-merkezi` ekranı eklendi.
+- Firmaya bağlanmış mükellef oturumu ile açılan `/mukellef/fatura-yukle` ekranı eklendi; mükellef yalnızca kendi firma arşivine belge gönderir.
 - Firma ve dönem seçimi, çoklu dosya yükleme, kategori seçimi, belge listesi ve indirme bağlantısı eklendi.
 
 ## Belge kabul API'si
@@ -35,5 +36,7 @@ Tüm uç noktalar mevcut danışman oturumu / advisor yetkisi gerektirir. Firma 
 - Canlı Railway servisine bağlama veya deploy yapılmamıştır.
 
 ## Doğrulama durumu
+
+- API ve iki ekran kurtarma dalına yazıldı; canlı ortamda çalıştırma, otomatik test ve güvenlik testi henüz yapılmadı.
 
 Kaynak ağacının tamamı kurtarılamadığı için bu dal henüz derlenmiş/test edilmiş kabul edilmemelidir. Özellikle eski ZIP içindeki `dist/` arayüz dosyaları Git geçmişinde ayrı dosyalar olarak bulunmuyor; yalnızca ZIP arşivi mevcut. Bu nedenle mevcut canlı arayüze entegre edilmeden önce arayüz dosyaları kurtarılmalı ve tam test/build çalıştırılmalıdır.
