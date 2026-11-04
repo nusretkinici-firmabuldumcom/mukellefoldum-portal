@@ -2,7 +2,12 @@
 
 Bu dal, eski MükellefOldum kaynak kodunun kurtarılabilen sunucu tarafı sürümü üzerinde hazırlanmıştır. Üretim servisine bağlı değildir.
 
-## İlk aşama: SMMM tarafı belge kabul API'si
+## İlk aşama: SMMM ekranı ve belge kabul API'si
+
+- Danışman oturumu ile açılan `/fatura-merkezi` ekranı eklendi.
+- Firma ve dönem seçimi, çoklu dosya yükleme, kategori seçimi, belge listesi ve indirme bağlantısı eklendi.
+
+## Belge kabul API'si
 
 Tüm uç noktalar mevcut danışman oturumu / advisor yetkisi gerektirir. Firma kimliği istek gövdesinden alınsa da işlem öncesinde kayıtlı firma listesinde doğrulanır. Dönem biçimi ve firma kapsamı mevcut `agentStore` tarafından doğrulanır.
 
