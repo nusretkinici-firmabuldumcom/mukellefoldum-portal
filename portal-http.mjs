@@ -41,6 +41,12 @@ export function portalHttp({startup,portal,archive,firms,json,body,cloud,admin})
     else json(res,404,{error:'İşlem bulunamadı.'});
    }catch(e){json(res,400,{error:e.message});}return true;
   }
+  if(path==='/mukellef/fatura-yukle'&&req.method==='GET'){
+   if(identity.role!=='taxpayer'){json(res,403,{error:'Bu ekran mükellef hesabı içindir.'});return true;}
+   if(!identity.firmId){json(res,403,{error:'Mali müşaviriniz firma kaydınızı hesabınıza bağladığında belge yükleyebilirsiniz.'});return true;}
+   const html=await readFile(new URL('./dist/taxpayer-invoice-upload.html',import.meta.url));
+   res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(html);return true;
+  }
   if(identity.role!=='advisor'){if(path==='/'){res.writeHead(302,{Location:'/mukellefoldum'});res.end();}else json(res,403,{error:'Bu alana erişim yetkin yok.'});return true;}
   if(path==='/fatura-merkezi'&&req.method==='GET'){
    const html=await readFile(new URL('./dist/invoice-center.html',import.meta.url));
