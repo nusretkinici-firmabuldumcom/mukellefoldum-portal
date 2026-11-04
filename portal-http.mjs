@@ -47,7 +47,7 @@ export function portalHttp({startup,portal,archive,firms,json,body,cloud,admin})
     if(path==='/api/advisor/users'&&req.method==='GET')json(res,200,{users:await portal.users(q.get('firmId'))});
     else if(path==='/api/advisor/users'&&req.method==='POST')json(res,201,{user:await portal.createUser(JSON.parse((await body(req,4096)).toString()))});
     else if(path==='/api/advisor/user'&&req.method==='POST')json(res,200,{user:await portal.changeUser(JSON.parse((await body(req,4096)).toString()))});
-    if(path==='/api/advisor/invoices'&&req.method==='GET'){
+    else if(path==='/api/advisor/invoices'&&req.method==='GET'){
      const firmId=q.get('firmId'),period=q.get('period');
      const firm=(await firms()).find(f=>f.id===firmId);if(!firm)throw Error('Firma bulunamadı.');
      const workspace=await archive.read(firmId,period);
@@ -62,7 +62,7 @@ export function portalHttp({startup,portal,archive,firms,json,body,cloud,admin})
     else if(path==='/api/advisor/invoices/file'&&req.method==='GET'){
      const {doc,bytes}=await archive.file(q.get('firmId'),q.get('period'),q.get('id'));attachment(res,bytes,doc.name);
     }
-    else else if(path==='/api/advisor/declarations'&&req.method==='GET')json(res,200,{declarations:await portal.publications(q.get('firmId'))});
+    else if(path==='/api/advisor/declarations'&&req.method==='GET')json(res,200,{declarations:await portal.publications(q.get('firmId'))});
     else if(path==='/api/advisor/publish'&&req.method==='POST')json(res,201,{declaration:await portal.publish(q.get('firmId'),q.get('period'),q.get('title'),await body(req,20*1024*1024))});
     else if(path==='/api/advisor/unpublish'&&req.method==='POST'){const input=JSON.parse((await body(req,4096)).toString());await portal.unpublish(input.firmId,input.id);json(res,200,{ok:true});}
     else json(res,404,{error:'İşlem bulunamadı.'});
