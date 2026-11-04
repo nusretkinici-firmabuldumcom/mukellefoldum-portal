@@ -35,6 +35,22 @@ Tüm uç noktalar mevcut danışman oturumu / advisor yetkisi gerektirir. Firma 
 - LUCA'ya otomatik fiş gönderimi yapılmaz. Muhasebe kaydı için veri çıkarımı, hesap önerisi ve SMMM onay kuyruğu sonraki aşamadır.
 - Canlı Railway servisine bağlama veya deploy yapılmamıştır.
 
+
+## GİB bağlantısı için resmî yol ve sınırlar
+
+Resmî kılavuzların gösterdiği ayrım:
+
+- **e-Fatura doğrudan entegrasyon:** GİB teknik kılavuzlarına uyum, başvuru/test ve Başkanlık onayı gerektiren bir entegrasyon yöntemidir. e-Fatura sistemi 7/24 alım-gönderim esasına göre çalışır. Bu, sıradan bir kullanıcı adı/şifre otomasyonu değildir.
+- **Özel entegratör:** GİB'den izinli özel entegratör, hizmet verdiği mükelleflerin faturalarını alıp iletebilir. Mükellef yetkilendirmesi, gizlilik ve veri güvenliği yükümlülükleri vardır. MükellefOldum için ilk otomatik gelen e-Fatura bağlantısında bu yol tercih edilmelidir.
+- **e-Arşiv Portal:** GİB'in resmî portal giriş sayfası mali mühür/sertifika tabanlı giriş tarif ediyor. İncelenen resmî kaynaklarda üçüncü tarafların kullanabileceği genel amaçlı, açık bir toplu e-Arşiv gelen-fatura API'si doğrulanamadı. Bu nedenle portal ekranına robotla giriş veya GİB parolası saklama yapılmayacak; yazılı GİB teyidi ya da yetkili entegratör servisi olmadan otomatik çekim vaadi verilmeyecek.
+- **İlk sürüm:** Mükellefin kendi yüklediği PDF/XML, e-posta eki ve özel entegratörün yetkili API'si tek arşivde birleştirilecek. Her kaynak ve belge kimliği audit kaydında tutulacak.
+
+Resmî dayanaklar:
+- [GİB e-Fatura Uygulaması Entegrasyon Kılavuzu](https://ebelge.gib.gov.tr/dosyalar/kilavuzlar/e-FaturaUygulamasiEntegrasyonKilavuzu-v1.9.pdf)
+- [GİB e-Fatura Özel Entegrasyon Kılavuzu](https://ebelge.gib.gov.tr/dosyalar/kilavuzlar/e-Fatura_Uygulamasi_Ozel_Entegrasyon_Kilavuzu_v1.12.pdf)
+- [GİB'in e-Fatura entegrasyon ve özel entegratör mevzuatı açıklaması](https://gib.gov.tr/mevzuat/kanun/434/teblig/8014)
+- [GİB e-Arşiv Portal giriş ekranı](https://earsivportal.efatura.gov.tr/)
+
 ## Doğrulama durumu
 
 - API ve iki ekran kurtarma dalına yazıldı; canlı ortamda çalıştırma, otomatik test ve güvenlik testi henüz yapılmadı.
