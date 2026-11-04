@@ -13,7 +13,7 @@
 <section class="panel"><h1>Fatura Toplama Merkezi</h1><p class="muted">Mükellef belgelerini tek yerde toplayın. Belgeler firma ve dönem bazında arşivlenir; aynı dosyanın tekrar yüklenmesi engellenir.</p>
 <div class="grid">
 <div><label for="firm">Mükellef / Firma</label><select id="firm"><option value="">Firmalar yükleniyor…</option></select></div>
-<div><label for="period">Dönem</label><input id="period" type="month" value="${new Date().toISOString().slice(0,7)}"></div>
+<div><label for="period">Dönem</label><input id="period" type="month" value=""></div>
 <div><label for="category">Belge türü</label><select id="category"><option value="purchase">Alış faturası</option><option value="sales">Satış faturası</option><option value="expense">Gider fişi</option><option value="z">Z raporu</option></select></div>
 </div>
 <div class="actions"><div style="flex:1;min-width:220px"><label for="files">Dosyalar (PDF, JPG, PNG, XML · en fazla 20 MB/dosya)</label><input id="files" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.xml"></div><button id="upload">Belgeleri yükle</button><button id="refresh" type="button" style="background:#e2e8f0;color:#172033">Listeyi yenile</button></div>
@@ -22,7 +22,7 @@
 <section class="panel"><h2>Toplanan belgeler</h2><div class="tablewrap"><table><thead><tr><th>Dosya</th><th>Kategori</th><th>Yüklenme</th><th>Durum</th><th></th></tr></thead><tbody id="docs"><tr><td colspan="5" class="empty">Önce firma ve dönem seçin.</td></tr></tbody></table></div></section>
 </main>
 <script>
-const $=id=>document.getElementById(id),firm=$('firm'),period=$('period'),category=$('category'),docs=$('docs'),status=$('status');
+const $=id=>document.getElementById(id),firm=$('firm'),period=$('period'),category=$('category'),docs=$('docs'),status=$('status');period.value=new Date().toISOString().slice(0,7);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',...opts});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error(data.error||'İşlem başarısız.');return data;}
 async function loadFirms(){try{const data=await api('/api/firms');firm.innerHTML='<option value="">Firma seçin</option>'+data.firms.map(f=>'<option value="'+esc(f.id)+'">'+esc(f.name)+' · '+esc(f.taxId)+'</option>').join('');}catch(e){status.textContent=e.message;}}
