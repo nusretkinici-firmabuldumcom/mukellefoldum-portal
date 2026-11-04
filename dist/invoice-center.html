@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MükellefOldum · Fatura Toplama Merkezi</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#172033;background:#f4f6fa}*{box-sizing:border-box}body{margin:0}.top{background:#172b4d;color:#fff;padding:22px max(20px,calc((100% - 1100px)/2))}.top strong{font-size:20px}.top p{margin:7px 0 0;color:#cbd5e1}.wrap{max-width:1100px;margin:26px auto;padding:0 18px}.panel{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 3px 14px #0f172a0a}h1{font-size:24px;margin:0 0 8px}h2{font-size:17px;margin:0 0 16px}.muted{color:#64748b;font-size:14px}.grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}label{display:block;font-size:13px;font-weight:650;margin-bottom:6px}input,select,button{font:inherit}input,select{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;background:#fff}button{border:0;border-radius:8px;padding:11px 16px;background:#2563eb;color:white;font-weight:650;cursor:pointer}button:disabled{opacity:.5;cursor:wait}.actions{display:flex;gap:10px;align-items:end;margin-top:14px;flex-wrap:wrap}.notice{padding:11px 13px;border-radius:8px;background:#eff6ff;color:#1e40af;font-size:13px;margin-top:14px}.status{font-size:14px;margin-top:12px;min-height:20px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #e2e8f0}th{color:#64748b;font-size:12px;text-transform:uppercase}.tag{display:inline-block;border-radius:20px;padding:4px 9px;background:#f1f5f9;font-size:12px}.download{color:#2563eb;text-decoration:none;font-weight:600}.empty{padding:25px;text-align:center;color:#64748b}@media(max-width:700px){.grid{grid-template-columns:1fr}.panel{padding:15px}.top{padding:18px}}
+</style>
+</head>
+<body>
+<header class="top"><strong>MükellefOldum</strong><p>SMMM çalışma alanı · Fatura Toplama Merkezi</p></header>
+<main class="wrap">
+<section class="panel"><h1>Fatura Toplama Merkezi</h1><p class="muted">Mükellef belgelerini tek yerde toplayın. Belgeler firma ve dönem bazında arşivlenir; aynı dosyanın tekrar yüklenmesi engellenir.</p>
+<div class="grid">
+<div><label for="firm">Mükellef / Firma</label><select id="firm"><option value="">Firmalar yükleniyor…</option></select></div>
+<div><label for="period">Dönem</label><input id="period" type="month" value="${new Date().toISOString().slice(0,7)}"></div>
+<div><label for="category">Belge türü</label><select id="category"><option value="purchase">Alış faturası</option><option value="sales">Satış faturası</option><option value="expense">Gider fişi</option><option value="z">Z raporu</option></select></div>
+</div>
+<div class="actions"><div style="flex:1;min-width:220px"><label for="files">Dosyalar (PDF, JPG, PNG, XML · en fazla 20 MB/dosya)</label><input id="files" type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.xml"></div><button id="upload">Belgeleri yükle</button><button id="refresh" type="button" style="background:#e2e8f0;color:#172033">Listeyi yenile</button></div>
+<div id="status" class="status" role="status"></div><div class="notice">Bu ekran belge arşivleme ve mükerrer dosya kontrolü sağlar. GİB'den otomatik çekim, e-posta senkronizasyonu ve LUCA'ya kayıt aktarımı henüz etkin değildir. GİB parolanızı bu ekrana girmeyin.</div>
+</section>
+<section class="panel"><h2>Toplanan belgeler</h2><div class="tablewrap"><table><thead><tr><th>Dosya</th><th>Kategori</th><th>Yüklenme</th><th>Durum</th><th></th></tr></thead><tbody id="docs"><tr><td colspan="5" class="empty">Önce firma ve dönem seçin.</td></tr></tbody></table></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),firm=$('firm'),period=$('period'),category=$('category'),docs=$('docs'),status=$('status');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',...opts});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error(data.error||'İşlem başarısız.');return data;}
+async function loadFirms(){try{const data=await api('/api/firms');firm.innerHTML='<option value="">Firma seçin</option>'+data.firms.map(f=>'<option value="'+esc(f.id)+'">'+esc(f.name)+' · '+esc(f.taxId)+'</option>').join('');}catch(e){status.textContent=e.message;}}
+async function refresh(){if(!firm.value||!period.value){docs.innerHTML='<tr><td colspan="5" class="empty">Firma ve dönem seçin.</td></tr>';return;}try{const q=new URLSearchParams({firmId:firm.value,period:period.value});const data=await api('/api/advisor/invoices?'+q);docs.innerHTML=data.documents.length?data.documents.map(d=>'<tr><td>'+esc(d.name)+'</td><td>'+esc(d.type)+'</td><td>'+esc(new Date(d.uploadedAt).toLocaleString('tr-TR'))+'</td><td><span class="tag">'+(d.status==='ready'?'İncelendi':'İnceleme bekliyor')+'</span></td><td><a class="download" href="/api/advisor/invoices/file?'+q+'&id='+encodeURIComponent(d.id)+'">İndir</a></td></tr>').join(''):'<tr><td colspan="5" class="empty">Bu dönem için henüz belge yok.</td></tr>';}catch(e){status.textContent=e.message;}}
+async function upload(){const selected=[...$('files').files];if(!firm.value||!period.value){status.textContent='Firma ve dönem seçin.';return;}if(!selected.length){status.textContent='Önce dosya seçin.';return;}const btn=$('upload');btn.disabled=true;let done=0,duplicates=0;try{for(const file of selected){if(file.size>20*1024*1024)throw Error(file.name+': 20 MB sınırı aşıldı.');const q=new URLSearchParams({firmId:firm.value,period:period.value,name:file.name,category:category.value});const data=await api('/api/advisor/invoices/upload?'+q,{method:'POST',headers:{'Content-Type':'application/octet-stream'},body:file});done++;if(data.duplicate)duplicates++;status.textContent=done+'/'+selected.length+' dosya işlendi…';}status.textContent=done+' dosya arşivlendi. '+duplicates+' mükerrer dosya yeniden kaydedilmedi.';$('files').value='';await refresh();}catch(e){status.textContent='Yükleme durdu: '+e.message;await refresh();}finally{btn.disabled=false;}}
+$('upload').addEventListener('click',upload);$('refresh').addEventListener('click',refresh);firm.addEventListener('change',refresh);period.addEventListener('change',refresh);loadFirms();
+</script>
+</body></html>
