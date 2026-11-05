@@ -22,7 +22,7 @@
 <section class="panel"><h2>Toplanan belgeler</h2><div class="tablewrap"><table><thead><tr><th>Dosya</th><th>Kategori</th><th>Yüklenme</th><th>Durum</th><th></th></tr></thead><tbody id="docs"><tr><td colspan="5" class="empty">Önce firma ve dönem seçin.</td></tr></tbody></table></div></section>
 </main>
 <script>
-const $=id=>document.getElementById(id),firm=$('firm'),period=$('period'),category=$('category'),docs=$('docs'),status=$('status');period.value=new Date().toISOString().slice(0,7);
+const $=id=>document.getElementById(id),firm=$('firm'),period=$('period'),category=$('category'),docs=$('docs'),status=$('status');const now=new Date();period.value=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function api(url,opts={}){const r=await fetch(url,{credentials:'same-origin',...opts});const data=await r.json().catch(()=>({}));if(!r.ok)throw Error(data.error||'İşlem başarısız.');return data;}
 async function loadFirms(){try{const data=await api('/api/firms');firm.innerHTML='<option value="">Firma seçin</option>'+data.firms.map(f=>'<option value="'+esc(f.id)+'">'+esc(f.name)+' · '+esc(f.taxId)+'</option>').join('');}catch(e){status.textContent=e.message;}}
