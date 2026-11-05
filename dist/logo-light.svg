@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="96" viewBox="0 0 600 96" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">mukellefoldum</title>
+  <desc id="desc">Turuncu defter çizgilerinden oluşan M simgesi ve açık renk mukellefoldum kelime işareti.</desc>
+  <defs>
+    <linearGradient id="mark" x1="8" y1="14" x2="94" y2="92" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFC14B"/>
+      <stop offset="1" stop-color="#F47A2C"/>
+    </linearGradient>
+  </defs>
+  <g stroke="url(#mark)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 83V34c0-12 14-18 23-9l18 18 18-18c9-9 23-3 23 9v49"/>
+  </g>
+  <circle cx="90" cy="18" r="6" fill="#FFC14B"/>
+  <text x="120" y="53" dominant-baseline="middle" font-family="Manrope, Inter, 'Segoe UI', Arial, sans-serif" font-size="57" font-weight="760" letter-spacing="-2.5">
+    <tspan fill="#FFFFFF">mukellef</tspan><tspan fill="#FFAD37">oldum</tspan>
+  </text>
+</svg>

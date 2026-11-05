@@ -1,0 +1,7 @@
+const loginQuery=new URLSearchParams(location.search),client=loginQuery.get('role')==='taxpayer',next=loginQuery.get('next');
+const safeNext=next&&/^\/partner(?:\?[^#]*)?$/.test(next)&&!next.includes('\\')?next:null;
+document.querySelector(client?'#taxpayer-role':'#advisor-role').classList.add('active');
+if(client){document.querySelector('#login-title').textContent='mukellefoldum’e giriş';document.querySelector('#login-note').textContent='Kendi hesabın veya mali müşavirinin verdiği bilgilerle giriş yap.';}
+document.querySelector('#membership-link').hidden=!client;
+if(safeNext)document.querySelector('#taxpayer-role').href='/giris?role=taxpayer&next='+encodeURIComponent(safeNext);
+document.querySelector('#login-form').onsubmit=async e=>{e.preventDefault();const button=document.querySelector('#login-submit');button.disabled=true;document.querySelector('#login-error').textContent='';const password=document.querySelector('#password').value;document.querySelector('#password').value='';try{const response=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:document.querySelector('#username').value,password})});const data=await response.json();if(!response.ok)throw Error();location.assign(data.role==='advisor'?'/ofis':safeNext||'/mukellefoldum');}catch(_){document.querySelector('#login-error').textContent='Giriş yapılamadı. Bilgilerini ve bağlantını kontrol edip yeniden dene.';}finally{button.disabled=false;}};

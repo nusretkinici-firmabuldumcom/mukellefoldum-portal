@@ -1,7 +1,7 @@
 import {readFile} from 'node:fs/promises';
 import {validBasicAuth} from './deployment-auth.mjs';
 export function portalHttp({startup,portal,archive,firms,json,body,cloud,admin}){
- const publicFiles={'/tanitim':'landing.html','/landing.css':'landing.css','/landing.js':'landing.js','/startup-ui.js':'startup-ui.js','/startup-ui.css':'startup-ui.css','/advisor-startup.js':'advisor-startup.js','/giris':'login.html','/portal.css':'portal.css','/login.js':'login.js','/kolaymukellef':'taxpayer.html','/mukellefoldum':'taxpayer.html','/taxpayer.js':'taxpayer.js','/upload-categories.js':'upload-categories.js','/upload-categories.css':'upload-categories.css'};
+ const publicFiles={'/tanitim':'landing.html','/landing.css':'landing.css','/landing.js':'landing.js','/giris':'login.html','/portal.css':'portal.css','/login.js':'login.js','/kolaymukellef':'taxpayer.html','/mukellefoldum':'taxpayer.html','/taxpayer.js':'taxpayer.js','/upload-categories.js':'upload-categories.js','/upload-categories.css':'upload-categories.css','/favicon.png':'favicon.png','/icon-192.png':'icon-192.png','/icon-512.png':'icon-512.png','/logo-light.png':'logo-light.png','/logo-light.svg':'logo-light.svg'};
  if(process.env.PUBLIC_LANDING_ROOT==='1')publicFiles['/']='landing.html';
  const cookie=token=>`luca_session=${token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=${token?28800:0}${cloud?'; Secure':''}`;
  function attachment(res,bytes,name){res.writeHead(200,{'Content-Type':'application/octet-stream','Content-Disposition':`attachment; filename*=UTF-8''${encodeURIComponent(name)}`,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(bytes);}
