@@ -48,7 +48,7 @@ export function portalHttp({startup,portal,archive,firms,json,body,cloud,admin})
    res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(html);return true;
   }
   if(identity.role!=='advisor'){if(path==='/'){res.writeHead(302,{Location:'/mukellefoldum'});res.end();}else json(res,403,{error:'Bu alana erişim yetkin yok.'});return true;}
-  if(path==='/fatura-merkezi'&&req.method==='GET'){
+  if((path==='/fatura-merkezi'||path==='/ofis'||path==='/')&&req.method==='GET'){
    const html=await readFile(new URL('./dist/invoice-center.html',import.meta.url));
    res.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});res.end(html);return true;
   }

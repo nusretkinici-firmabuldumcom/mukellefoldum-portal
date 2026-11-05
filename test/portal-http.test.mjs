@@ -9,7 +9,7 @@ function request(url,cookie='luca_session=tax-token'){
 function harness(){
  const calls=[];
  const handler=portalHttp({
-  startup:{},portal:{async session(token){return token==='tax-token'?{role:'taxpayer',firmId:'firm-owned',userId:'user-1'}:null;},logout(){}},
+  startup:{},portal:{async session(token){if(token==='tax-token')return {role:'taxpayer',firmId:'firm-owned',userId:'user-1'};if(token==='advisor-token')return {role:'advisor'};return null;},logout(){}},
   archive:{async read(firmId,period){calls.push({kind:'read',firmId,period});return {docs:[]};},async file(firmId,period,id){calls.push({kind:'file',firmId,period,id});return {doc:{name:'receipt.pdf'},bytes:Buffer.from('ok')};}},
   firms:async()=>[{id:'firm-owned'},{id:'firm-other'}],json:(res,status,data)=>{res.writeHead(status,{'Content-Type':'application/json'});res.end(JSON.stringify(data));},body:async()=>Buffer.alloc(0),cloud:false,admin:{}
  });
@@ -34,4 +34,12 @@ test('unauthenticated callers cannot read client documents',async()=>{
  const {handler}=harness(),res=response();
  await handler(request('/api/client/documents?period=2026-10',''),res,'/api/client/documents');
  assert.equal(res.status,401);
+});
+
+test('advisor /ofis entry serves the available invoice center instead of a missing legacy page',async()=>{
+ const {handler}=harness(),res=response();
+ await handler(request('/ofis','luca_session=advisor-token'),res,'/ofis');
+ assert.equal(res.status,200);
+ assert.match(res.headers['Content-Type'],/text\/html/);
+ assert.match(res.body,/Fatura Toplama Merkezi/);
 });
