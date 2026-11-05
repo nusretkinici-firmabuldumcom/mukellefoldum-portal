@@ -15,7 +15,7 @@ import {portalStore} from './portal-store.mjs';
 import {startupStore} from './startup-store.mjs';
 import {portalHttp} from './portal-http.mjs';
 const execute=promisify(execFile),codeRoot=fileURLToPath(new URL('.',import.meta.url)),root=process.env.DATA_ROOT||codeRoot;
-const cloud=process.env.DEPLOYMENT_MODE==='cloud',port=Number(process.env.PORT||4173);
+const cloud=process.env.DEPLOYMENT_MODE==='cloud'||Boolean(process.env.RAILWAY_ENVIRONMENT),port=Number(process.env.PORT||4173);
 if(cloud&&(!process.env.APP_USER||!process.env.APP_PASSWORD))throw Error('Cloud authentication must be configured.');
 const files={'/ofis':'index.html','/':'index.html','/index.html':'index.html','/app.js':'app.js','/firms.js':'firms.js','/workflow-ui.js':'workflow-ui.js','/archive-ui.js':'archive-ui.js','/onboarding-ui.js':'onboarding-ui.js','/style.css':'style.css'};
 const types={html:'text/html; charset=utf-8',js:'text/javascript; charset=utf-8',css:'text/css; charset=utf-8'};
