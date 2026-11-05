@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {portalHttp} from '../portal-http.mjs';
 
-function response(){return {status:0,headers:{},body:'',writeHead(status,headers={}){this.status=status;this.headers=headers;},setHeader(name,value){this.headers[name]=value;},end(body=''){this.body=body;}};}
+function response(){return {status:0,headers:{},body:'',writeHead(status,headers={}){this.status=status;this.headers=headers;},setHeader(name,value){this.headers[name]=value;},end(body=''){this.body=Buffer.isBuffer(body)?body.toString('utf8'):body;}};}
 function request(url,cookie='luca_session=tax-token'){
  return {method:'GET',url,headers:{cookie},socket:{remoteAddress:'127.0.0.1'},async *[Symbol.asyncIterator](){}};
 }
